@@ -1,0 +1,21 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  width: 20rem;
+}
+
+.btn-submit {
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 2rem;
+  background-color: #000;
+  color: #fff;
+  opacity: 0.3;
+}
+
+.active {
+  opacity: 1;
+  &:hover{
+    cursor: pointer;
+  }
+}
