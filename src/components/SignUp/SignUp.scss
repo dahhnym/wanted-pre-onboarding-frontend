@@ -15,7 +15,13 @@
 
 .active {
   opacity: 1;
-  &:hover{
+  &:hover {
     cursor: pointer;
+  }
+}
+
+.btn-switch {
+  span {
+    text-decoration: underline;
   }
 }
