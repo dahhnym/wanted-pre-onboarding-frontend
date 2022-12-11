@@ -21,14 +21,25 @@ const SignUp = () => {
     setIsSignInClicked(prev => !prev);
   };
 
+  const signUpUser = async () => {
+    const accessToken = await signUpNewUser();
+    if (accessToken) {
+      localStorage.setItem('access_token', accessToken);
+      return true;
+    } else {
+      return false;
+    }
+  };
+
   const signInUser = async () => {
     const accessToken = await getUser(email, password);
     console.log('accessToken', accessToken);
     if (accessToken) {
       localStorage.setItem('access_token', accessToken);
       return true;
+    } else {
+      return false;
     }
-    return false;
   };
 
   const onSubmit = async e => {
@@ -44,8 +55,8 @@ const SignUp = () => {
       }
     } else {
       signUpNewUser(email, password);
-      const accessToken = signUpNewUser(email, password);
-      if (accessToken) {
+      const isSuccess = await signUpNewUser(email, password);
+      if (isSuccess) {
         navigate('/todo');
       } else {
         return;

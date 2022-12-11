@@ -29,10 +29,9 @@ export const getUser = async (email, password) => {
   return accessToken;
 };
 
-export const getTodo = async () => {
+export const getTodos = async () => {
   try {
     const todoData = await axios.get('/todos').then(res => {
-      console.log('todo res.data', res);
       return res.data;
     });
 
@@ -42,23 +41,45 @@ export const getTodo = async () => {
   }
 };
 
-export const postTodo = async todoInput => {
-  console.log('todoInput', todoInput);
+export const postTodo = async todo => {
   try {
-    await axios
-      .post('/todos', {
-        headers: {
-          'Content-type': 'application/json',
+    return await axios
+      .post(
+        '/todos',
+        {
+          todo,
         },
-        data: {
-          todo: 'todoInput',
+        {
+          'Content-Type': 'application/json',
         },
-      })
+      )
       .then(res => {
-        console.log('create to do');
-        alert('create todo result', res.status);
+        console.log(res);
+        if (res.status === 201) {
+          return true;
+        } else {
+          return false;
+        }
       });
   } catch (error) {
     console.error(error);
   }
+};
+
+export const updateTodo = async (id, todo, isCompletedStatus) => {
+  await axios
+    .put('/todos', {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      params: {
+        id,
+      },
+      data: {
+        todo: todo,
+        isCompleted: isCompletedStatus,
+      },
+    })
+    .then(res => console.log(res.status))
+    .catch(error => console.error(error));
 };

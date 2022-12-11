@@ -2,7 +2,7 @@ import './App.css';
 import './reset.css';
 import SignUp from './components/SignUp/SignUp';
 import { Route, Routes, useNavigate } from 'react-router-dom';
-import ToDo from './components/ToDo';
+import ToDo from './components/ToDo/ToDo';
 import { useEffect } from 'react';
 
 function App() {
