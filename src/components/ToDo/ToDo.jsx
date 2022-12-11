@@ -57,7 +57,12 @@ const ToDo = () => {
   };
 
   const handleUpdateTodo = async (id, todoContent, isCompletedStatus) => {
-    const isSuccess = await updateTodo(id, todoContent, isCompletedStatus);
+    const isSuccess = await updateTodo(
+      id,
+      todoContent,
+      isCompletedStatus,
+      accessToken,
+    );
     if (isSuccess) {
       await fetchTodoData();
     }
@@ -69,7 +74,7 @@ const ToDo = () => {
   const handleDeleteTodo = async e => {
     const selectedTodoIdNumber = Number(e.target.value);
     setSelectedTodoId(selectedTodoIdNumber);
-    const isSuccess = await deleteTodo(selectedTodoIdNumber);
+    const isSuccess = await deleteTodo(selectedTodoIdNumber, accessToken);
     if (isSuccess) {
       await fetchTodoData();
     }

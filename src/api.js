@@ -46,12 +46,21 @@ export const getTodos = async accessToken => {
   }
 };
 
-export const postTodo = async todo => {
+export const postTodo = async (todo, accessToken) => {
   try {
     return await axios
-      .post('/todos', {
-        todo,
-      })
+      .post(
+        '/todos',
+        {
+          todo,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+          },
+        },
+      )
       .then(res => {
         if (res.status === 201) {
           return true;
@@ -64,12 +73,21 @@ export const postTodo = async todo => {
   }
 };
 
-export const updateTodo = async (id, todo, isCompleted) => {
+export const updateTodo = async (id, todo, isCompleted, accessToken) => {
   return await axios
-    .put(`/todos/${id}`, {
-      todo,
-      isCompleted,
-    })
+    .put(
+      `/todos/${id}`,
+      {
+        todo,
+        isCompleted,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+        },
+      },
+    )
     .then(res => {
       console.log(`status ${res.status} Todo Update success`);
       return true;
@@ -77,9 +95,13 @@ export const updateTodo = async (id, todo, isCompleted) => {
     .catch(error => console.error('Fail to update', error));
 };
 
-export const deleteTodo = async id => {
+export const deleteTodo = async (id, accessToken) => {
   return await axios
-    .delete(`/todos/${id}`)
+    .delete(`/todos/${id}`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    })
     .then(res => {
       console.log(`status ${res.status} Delete Success`);
       return true;
