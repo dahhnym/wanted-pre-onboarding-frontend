@@ -1,27 +1,77 @@
-.form {
+.signin-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.signin-form {
   display: flex;
   flex-direction: column;
-  width: 20rem;
+  width: 100%;
+  max-width: 25rem;
 }
 
 .btn-submit {
   border: none;
   padding: 0.5rem 1rem;
   border-radius: 2rem;
-  background-color: #000;
-  color: #fff;
-  opacity: 0.3;
+  background-color: #f2f4f7;
+  color: #cccccf;
+  margin-top: 1rem;
+  font-weight: bold;
+  height: 2.5rem;
+  &:hover {
+    cursor: initial;
+  }
 }
 
-.active {
-  opacity: 1;
-  &:hover {
-    cursor: pointer;
-  }
+.activate {
+  background-color: #3366ff;
+  color: #fff;
+}
+
+.btn-submit.activate:hover {
+  cursor: pointer;
+}
+
+.passed {
+  background-color: #e8f0fe;
 }
 
 .btn-switch {
   span {
     text-decoration: underline;
+  }
+}
+
+.form__label {
+  color: #888888;
+  font-weight: bold;
+  margin: 0.7rem 0 0.3rem;
+}
+
+.form__input {
+  border: solid 1px #e1e2e3;
+  height: 2.2rem;
+  border-radius: 5px;
+  padding-left: 0.5rem;
+  &:focus {
+    border-color: transparent;
+    outline: solid 1px #3366ff;
+  }
+  &::placeholder {
+    color: #d6cccc;
+    font-weight: bold;
+  }
+}
+
+.desc {
+  font-size: 0.9rem;
+  color: #888888;
+  font-weight: bold;
+  button {
+    margin-left: 0.3rem;
   }
 }

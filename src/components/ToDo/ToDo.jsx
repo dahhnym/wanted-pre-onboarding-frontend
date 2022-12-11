@@ -3,6 +3,12 @@ import { useState } from 'react';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { deleteTodo, getTodos, postTodo, updateTodo } from '../../api';
+import Edit from './../../assets/edit.svg';
+import Delete from './../../assets/delete.svg';
+import Confirm from './../../assets/confirm.svg';
+import Cancel from './../../assets/cancel.svg';
+import Checked from './../../assets/checked.svg';
+import NotChecked from './../../assets/not-checked.svg';
 
 const ToDo = () => {
   const navigate = useNavigate();
@@ -80,91 +86,138 @@ const ToDo = () => {
     }
   };
 
-  return (
-    <div>
-      {}
-      <h4>to do list</h4>
-      <form onSubmit={createToDo}>
-        <label htmlFor="">할일목록</label>
-        <input
-          type="text"
-          placeholder="to do"
-          value={todo}
-          onChange={writeTodo}
-        />
-        <button type="submit" className="btn-submit__create-todo">
-          추가
-        </button>
-      </form>
-      <ul>
-        {todoData &&
-          todoData.map(item => {
-            return (
-              <li key={item.id}>
-                <input
-                  type="checkbox"
-                  id={item.id}
-                  checked={item.isCompleted}
-                  onChange={() =>
-                    handleUpdateTodo(item.id, item.todo, !item.isCompleted)
-                  }
-                />
-                {selectedTodoId !== item.id && (
-                  <label
-                    htmlFor={item.id}
-                    className={item.isCompleted ? 'item-completed' : ''}
-                  >
-                    {item.todo}
-                  </label>
-                )}
-                {isEditing && selectedTodoId === item.id && (
-                  <>
-                    <input type="text" value={newTodo} onChange={editTodo} />
-                    <button
-                      type="button"
-                      onClick={() =>
-                        handleUpdateTodo(
-                          selectedTodoId,
-                          newTodo,
-                          item.isCompleted,
-                        )
-                      }
-                    >
-                      완료
-                    </button>
-                    <button type="button" onClick={handleEditTodo}>
-                      취소
-                    </button>
-                  </>
-                )}
-                {selectedTodoId !== item.id && (
-                  <>
-                    <button
-                      type="button"
-                      className="btn-cancel"
-                      onClick={handleEditTodo}
-                      value={item.id}
-                      disabled={isEditing}
-                    >
-                      수정
-                    </button>
+  const handleSignout = () => {
+    localStorage.removeItem('access_token');
+    navigate('/');
+  };
 
-                    <button
-                      type="button"
-                      className="btn-cancel"
-                      onClick={handleDeleteTodo}
-                      value={item.id}
-                      disabled={isEditing}
+  return (
+    <>
+      <button type="button" className="signout-button" onClick={handleSignout}>
+        로그아웃
+      </button>
+      <div className="todo__container">
+        <form onSubmit={createToDo} className="todo__form">
+          <fieldset>
+            <legend className="todo__title">To Do List</legend>
+            <input
+              type="text"
+              placeholder="To Do"
+              value={todo}
+              onChange={writeTodo}
+            />
+            <button type="submit" className="btn-submit__create-todo">
+              추가
+            </button>
+          </fieldset>
+        </form>
+        <ul className="todo__list">
+          {todoData &&
+            todoData.map(item => {
+              return (
+                <li key={item.id} className="list-item">
+                  <input
+                    type="checkbox"
+                    id={item.id}
+                    checked={item.isCompleted}
+                    onChange={() =>
+                      handleUpdateTodo(item.id, item.todo, !item.isCompleted)
+                    }
+                    style={{ display: 'none' }}
+                  />
+                  <img
+                    src={item.isCompleted ? Checked : NotChecked}
+                    alt={item.isCompleted ? '완료' : '미완료'}
+                    style={{ width: '25px' }}
+                    onClick={() =>
+                      handleUpdateTodo(item.id, item.todo, !item.isCompleted)
+                    }
+                  />
+                  {selectedTodoId !== item.id && (
+                    <label
+                      htmlFor={item.id}
+                      className={`list-item__desc ${
+                        item.isCompleted ? 'completed' : ''
+                      }`}
                     >
-                      삭제
-                    </button>
-                  </>
-                )}
-              </li>
-            );
-          })}
-      </ul>
-    </div>
+                      {item.todo}
+                    </label>
+                  )}
+                  {isEditing && selectedTodoId === item.id && (
+                    <>
+                      <input type="text" value={newTodo} onChange={editTodo} />
+                      <div className="button-wrapper">
+                        <button
+                          type="button"
+                          onClick={() =>
+                            handleUpdateTodo(
+                              selectedTodoId,
+                              newTodo,
+                              item.isCompleted,
+                            )
+                          }
+                          className="list-item__button"
+                          style={{
+                            background: `center / contain no-repeat url(${Confirm})`,
+                            width: '20px',
+                            height: '20px',
+                          }}
+                        >
+                          <span className="a11y-hidden">확인</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={handleEditTodo}
+                          className="list-item__button"
+                          style={{
+                            background: `center / contain no-repeat url(${Cancel})`,
+                            width: '20px',
+                            height: '20px',
+                          }}
+                        >
+                          <span className="a11y-hidden">취소</span>
+                        </button>
+                      </div>
+                    </>
+                  )}
+                  {selectedTodoId !== item.id && !isEditing && (
+                    <div className="button-wrapper">
+                      <button
+                        type="button"
+                        className="list-item__button"
+                        onClick={handleEditTodo}
+                        value={item.id}
+                        disabled={isEditing}
+                        style={{
+                          background: `center / cover no-repeat url(${Edit})`,
+                          width: '20px',
+                          height: '20px',
+                        }}
+                      >
+                        <span className="a11y-hidden">수정</span>
+                      </button>
+                      <button
+                        type="button"
+                        className="list-item__button"
+                        onClick={handleDeleteTodo}
+                        value={item.id}
+                        disabled={isEditing}
+                        style={{
+                          background: `center / cover no-repeat url(${Delete})`,
+                          width: '20px',
+                          height: '20px',
+                        }}
+                      >
+                        <span className="a11y-hidden">삭제</span>
+                      </button>
+                    </div>
+                  )}
+                </li>
+              );
+            })}
+        </ul>
+      </div>
+    </>
   );
 };
 

@@ -1,15 +1,95 @@
+.signout-button {
+  background-color: #e1e2e3;
+  padding: 0.3rem 0.5rem;
+  border-radius: 5px;
+  float: right;
+  margin: 1rem;
+  color: #4b4b4b;
+  font-weight: bold;
+  &:hover {
+    transition: all ease-in-out 0.1s;
+    box-shadow: 1px 1px 5px 1px rgba(0, 0, 0, 0.2);
+  }
+}
+
+.todo__container {
+  margin: 0 auto;
+  width: 30rem;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.todo__title {
+  text-align: center;
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 2rem;
+}
+
+.todo__form {
+  margin-top: 5rem;
+  margin-bottom: 2rem;
+  text-align: center;
+  width: 100%;
+  input {
+    border: solid 1px #e1e2e3;
+    width: 100%;
+    max-width: 20rem;
+    height: 2.2rem;
+    border-radius: 5px;
+    padding-left: 0.5rem;
+    margin-right: 1rem;
+  }
+}
+
 .btn-submit__create-todo {
   background-color: #3366ff;
   color: #fff;
   padding: 0.5rem 1rem;
-  border-radius: 10px;
+  border-radius: 5px;
+  height: 2.2rem;
 }
 
-.btn-cancel {
-  font-weight: bold;
-  margin-left: 0.5rem;
+.todo__list {
+  display: flex;
+  flex-direction: column-reverse;
 }
 
-.item-completed {
+.list-item {
+  height: 2rem;
+  font-size: 1rem;
+  padding-left: 2rem;
+  display: flex;
+}
+
+.list-item__desc {
+  font-size: 1rem;
+  line-height: 2rem;
+  margin: 0 0.5rem;
+}
+
+.completed {
   text-decoration: line-through;
+}
+
+.list-item__button {
+  // border: solid 1px red;
+}
+
+.a11y-hidden {
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  height: 1px;
+  overflow: hidden;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
+}
+
+.button-wrapper {
+  margin-left: 0.5rem;
+  button:first-child {
+    margin-right: 0.5rem;
+  }
 }
