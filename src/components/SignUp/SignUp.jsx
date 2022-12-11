@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { signInUser, signUpNewUser } from '../../api';
+import { useNavigate } from 'react-router-dom';
+import { getUser, signUpNewUser } from '../../api';
 import './SignUp.scss';
 
 const SignUp = () => {
@@ -7,6 +8,8 @@ const SignUp = () => {
   const [password, setPassword] = useState('');
   const [isPassed, setIsPassed] = useState(false);
   const [isSignInClicked, setIsSignInClicked] = useState(false);
+
+  const navigate = useNavigate();
 
   const onEmailChange = e => setEmail(e.target.value);
 
@@ -18,16 +21,35 @@ const SignUp = () => {
     setIsSignInClicked(prev => !prev);
   };
 
-  const onSubmit = e => {
+  const signInUser = async () => {
+    const accessToken = await getUser(email, password);
+    console.log('accessToken', accessToken);
+    if (accessToken) {
+      localStorage.setItem('access_token', accessToken);
+      return true;
+    }
+    return false;
+  };
+
+  const onSubmit = async e => {
     e.preventDefault();
     if (email.trim().length === 0 || password.trim().length === 0) return;
     checkValidation();
     if (isSignInClicked) {
-      const status = signInUser(email, password);
-      if (status === 'SUCCESS') {
+      const isSuccess = await signInUser();
+      if (isSuccess) {
+        navigate('/todo');
+      } else {
+        return;
       }
     } else {
       signUpNewUser(email, password);
+      const accessToken = signUpNewUser(email, password);
+      if (accessToken) {
+        navigate('/todo');
+      } else {
+        return;
+      }
     }
   };
 
