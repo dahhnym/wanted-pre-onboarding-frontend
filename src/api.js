@@ -1,5 +1,7 @@
 import axios from 'axios';
 
+const accessToken = localStorage.getItem('access_token');
+axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
 axios.defaults.baseURL = 'https://pre-onboarding-selection-task.shop/';
 axios.defaults.headers.post['Content-Type'] = 'application/json';
 
@@ -20,21 +22,24 @@ export const getUser = async (email, password) => {
     .then(res => {
       if (res.status === 200) {
         alert('You are signed in!');
-        axios.defaults.headers.common[
-          'Authorization'
-        ] = `Bearer ${res.data['access_token']}`;
         return res.data['access_token'];
       }
     })
     .catch(error => console.error(error));
 };
 
-export const getTodos = async () => {
+export const getTodos = async accessToken => {
   try {
-    const todoData = await axios.get('/todos').then(res => {
-      console.log(`status ${res.status} Fetch todos successfully`);
-      return res.data;
-    });
+    const todoData = await axios
+      .get('/todos', {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      })
+      .then(res => {
+        console.log(`status ${res.status} Fetch todos successfully`);
+        return res.data;
+      });
     return todoData;
   } catch (error) {
     console.error('Fail to get todos', error);

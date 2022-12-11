@@ -23,7 +23,7 @@ const ToDo = () => {
   const [isEditing, setIsEditing] = useState(false);
 
   const fetchTodoData = async () => {
-    const todos = await getTodos();
+    const todos = await getTodos(accessToken);
     return setTodoData(todos);
   };
 

@@ -22,7 +22,7 @@ const SignUp = () => {
   };
 
   const signUpUser = async () => {
-    const accessToken = await signUpNewUser();
+    const accessToken = await signUpNewUser(email, password);
     if (accessToken) {
       localStorage.setItem('access_token', accessToken);
       return true;
@@ -54,11 +54,11 @@ const SignUp = () => {
         return;
       }
     } else {
-      signUpNewUser(email, password);
-      const isSuccess = await signUpNewUser(email, password);
+      const isSuccess = await signUpUser();
       if (isSuccess) {
         navigate('/todo');
       } else {
+        alert('Signup Fail');
         return;
       }
     }
