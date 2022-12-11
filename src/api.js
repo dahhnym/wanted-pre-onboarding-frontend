@@ -64,18 +64,16 @@ export const postTodo = async todo => {
   }
 };
 
-export const updateTodo = async (id, todo, isCompletedStatus) => {
-  await axios
-    .put('/todos', {
-      params: {
-        id,
-      },
-      data: {
-        todo: todo,
-        isCompleted: isCompletedStatus,
-      },
+export const updateTodo = async (id, todo, isCompleted) => {
+  return await axios
+    .put(`/todos/${id}`, {
+      todo,
+      isCompleted,
     })
-    .then(res => console.log('Update todo', res.status))
+    .then(res => {
+      console.log(`status ${res.status} Todo Update success`);
+      return true;
+    })
     .catch(error => console.error('Fail to update', error));
 };
 
