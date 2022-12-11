@@ -32,6 +32,7 @@ export const getUser = async (email, password) => {
 export const getTodos = async () => {
   try {
     const todoData = await axios.get('/todos').then(res => {
+      console.log('getting todos', res.data);
       return res.data;
     });
 
@@ -81,5 +82,15 @@ export const updateTodo = async (id, todo, isCompletedStatus) => {
       },
     })
     .then(res => console.log(res.status))
+    .catch(error => console.error(error));
+};
+
+export const deleteTodo = async id => {
+  return await axios
+    .delete(`/todos/${id}`)
+    .then(res => {
+      console.log(`status ${res.status} Delete Success`);
+      return true;
+    })
     .catch(error => console.error(error));
 };

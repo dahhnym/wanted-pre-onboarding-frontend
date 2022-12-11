@@ -2,7 +2,7 @@ import './Todo.scss';
 import { useState } from 'react';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getTodos, postTodo } from '../../api';
+import { deleteTodo, getTodos, postTodo } from '../../api';
 
 const ToDo = () => {
   const navigate = useNavigate();
@@ -19,6 +19,8 @@ const ToDo = () => {
 
   const [todoData, setTodoData] = useState([]);
   const [todo, setTodo] = useState('');
+  const [selectedTodoId, setSelectedTodoId] = useState();
+  const [isEditing, setIsEditing] = useState(false);
 
   const fetchTodoData = async () => {
     const todos = await getTodos();
@@ -42,6 +44,21 @@ const ToDo = () => {
     setTodo(e.target.value);
   };
 
+  const handleUpdateTodo = e => {
+    const selectedTodoIdNumber = Number(e.target.value);
+    setSelectedTodoId(selectedTodoIdNumber);
+    setIsEditing(true);
+  };
+
+  const handleDeleteTodo = async e => {
+    const selectedTodoIdNumber = Number(e.target.value);
+    setSelectedTodoId(selectedTodoIdNumber);
+    const isSuccess = await deleteTodo(selectedTodoIdNumber);
+    if (isSuccess) {
+      await fetchTodoData();
+    }
+  };
+
   return (
     <div>
       <h4>to do list</h4>
@@ -63,13 +80,32 @@ const ToDo = () => {
             return (
               <li key={item.id}>
                 <input type="checkbox" />
-                <label htmlFor="">{item.todo}</label>
-                <button type="button" className="btn-cancel">
-                  수정
+                {isEditing && selectedTodoId === item.id ? (
+                  <>
+                    <input type="text" value={item.todo} onChange={writeTodo} />
+                  </>
+                ) : (
+                  <label htmlFor="">{item.todo}</label>
+                )}
+                <button
+                  type="button"
+                  className="btn-cancel"
+                  onClick={handleUpdateTodo}
+                  value={item.id}
+                >
+                  {isEditing && selectedTodoId === item.id ? '완료' : '수정'}
                 </button>
-                <button type="button" className="btn-cancel">
-                  삭제
-                </button>
+
+                {isEditing ? null : (
+                  <button
+                    type="button"
+                    className="btn-cancel"
+                    onClick={handleDeleteTodo}
+                    value={item.id}
+                  >
+                    삭제
+                  </button>
+                )}
               </li>
             );
           })}
