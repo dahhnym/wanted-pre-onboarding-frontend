@@ -33,7 +33,6 @@ const SignUp = () => {
 
   const signInUser = async () => {
     const accessToken = await getUser(email, password);
-    console.log('accessToken', accessToken);
     if (accessToken) {
       localStorage.setItem('access_token', accessToken);
       return true;
@@ -51,6 +50,7 @@ const SignUp = () => {
       if (isSuccess) {
         navigate('/todo');
       } else {
+        alert('Login Fail');
         return;
       }
     } else {

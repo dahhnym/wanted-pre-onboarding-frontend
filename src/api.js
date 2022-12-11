@@ -1,9 +1,7 @@
 import axios from 'axios';
 
 axios.defaults.baseURL = 'https://pre-onboarding-selection-task.shop/';
-
-const accessToken = localStorage.getItem('access_token');
-axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+axios.defaults.headers.post['Content-Type'] = 'application/json';
 
 export const signUpNewUser = async (email, password) => {
   const accessToken = await axios
@@ -17,45 +15,39 @@ export const signUpNewUser = async (email, password) => {
 };
 
 export const getUser = async (email, password) => {
-  const accessToken = await axios
+  return await axios
     .post('/auth/signin', { email: email, password: password })
     .then(res => {
       if (res.status === 200) {
         alert('You are signed in!');
+        axios.defaults.headers.common[
+          'Authorization'
+        ] = `Bearer ${res.data['access_token']}`;
         return res.data['access_token'];
       }
     })
     .catch(error => console.error(error));
-  return accessToken;
 };
 
 export const getTodos = async () => {
   try {
     const todoData = await axios.get('/todos').then(res => {
-      console.log('getting todos', res.data);
+      console.log(`status ${res.status} Fetch todos successfully`);
       return res.data;
     });
-
     return todoData;
   } catch (error) {
-    console.error(error);
+    console.error('Fail to get todos', error);
   }
 };
 
 export const postTodo = async todo => {
   try {
     return await axios
-      .post(
-        '/todos',
-        {
-          todo,
-        },
-        {
-          'Content-Type': 'application/json',
-        },
-      )
+      .post('/todos', {
+        todo,
+      })
       .then(res => {
-        console.log(res);
         if (res.status === 201) {
           return true;
         } else {
@@ -70,9 +62,6 @@ export const postTodo = async todo => {
 export const updateTodo = async (id, todo, isCompletedStatus) => {
   await axios
     .put('/todos', {
-      headers: {
-        'Content-Type': 'application/json',
-      },
       params: {
         id,
       },
@@ -81,8 +70,8 @@ export const updateTodo = async (id, todo, isCompletedStatus) => {
         isCompleted: isCompletedStatus,
       },
     })
-    .then(res => console.log(res.status))
-    .catch(error => console.error(error));
+    .then(res => console.log('Update todo', res.status))
+    .catch(error => console.error('Fail to update', error));
 };
 
 export const deleteTodo = async id => {
@@ -92,5 +81,5 @@ export const deleteTodo = async id => {
       console.log(`status ${res.status} Delete Success`);
       return true;
     })
-    .catch(error => console.error(error));
+    .catch(error => console.error('Fail to delete', error));
 };

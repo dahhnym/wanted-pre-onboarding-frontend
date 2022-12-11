@@ -6,10 +6,10 @@ import { deleteTodo, getTodos, postTodo } from '../../api';
 
 const ToDo = () => {
   const navigate = useNavigate();
+  const accessToken = localStorage.getItem('access_token');
 
   useEffect(() => {
     const checkAccessToken = () => {
-      const accessToken = localStorage.getItem('access_token');
       if (!accessToken) {
         navigate('/');
       }
@@ -34,7 +34,7 @@ const ToDo = () => {
   const createToDo = async e => {
     e.preventDefault();
     setTodo('');
-    const isSuccess = await postTodo(todo);
+    const isSuccess = await postTodo(todo, accessToken);
     if (isSuccess) {
       await fetchTodoData();
     }
@@ -61,6 +61,7 @@ const ToDo = () => {
 
   return (
     <div>
+      {}
       <h4>to do list</h4>
       <form onSubmit={createToDo}>
         <label htmlFor="">할일목록</label>
@@ -75,7 +76,7 @@ const ToDo = () => {
         </button>
       </form>
       <ul>
-        {todoData.length > 0 &&
+        {todoData &&
           todoData.map(item => {
             return (
               <li key={item.id}>
