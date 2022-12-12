@@ -29,8 +29,8 @@ https://incomparable-kringle-dffa94.netlify.app/
 
 |                                                                       회원가입                                                                        |                                                                    로그인&로그아웃                                                                    |
 | :---------------------------------------------------------------------------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------------------------------------------------------------------: |
-| <img src='https://user-images.githubusercontent.com/74545780/207077431-8b96a0c7-1feb-4606-b2c0-27269245a269.gif' alt='회원가입 시연' width='400px' /> | <img src='https://user-images.githubusercontent.com/74545780/207077445-4529254a-0980-48b7-ae8b-90d627527383.gif' alt='회원가입 시연' width='400px' /> |
+| <img src='https://user-images.githubusercontent.com/74545780/207077431-8b96a0c7-1feb-4606-b2c0-27269245a269.gif' alt='회원가입 시연' width='400px' /> | <img src='https://user-images.githubusercontent.com/74545780/207077445-4529254a-0980-48b7-ae8b-90d627527383.gif' alt='로그인로그아웃 시연' width='400px' /> |
 
 |                                                              투두리스트 생성, 수정, 삭제                                                              |
 | :---------------------------------------------------------------------------------------------------------------------------------------------------: |
-| <img src='https://user-images.githubusercontent.com/74545780/207077460-2f9839ed-8b26-4a3d-b234-215e45dc70ef.gif' alt='회원가입 시연' width='400px' /> |
+| <img src='https://user-images.githubusercontent.com/74545780/207165834-71b8cb63-784f-4e49-89a0-f89e2daa75dd.gif' alt='투두리스트 CRUD 시연' width='400px' /> |
