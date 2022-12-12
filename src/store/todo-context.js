@@ -38,8 +38,6 @@ const editingTodoReducer = (state, action) => {
 };
 
 export const TodoContextProvider = props => {
-  const accessToken = localStorage.getItem('access_token');
-
   const [todoData, setTodoData] = useState([]);
 
   const initialState = {
@@ -52,7 +50,7 @@ export const TodoContextProvider = props => {
     initialState,
   );
 
-  const fetchTodoData = async () => {
+  const fetchTodoData = async accessToken => {
     const todos = await getTodos(accessToken);
     return setTodoData(todos);
   };
@@ -78,7 +76,6 @@ export const TodoContextProvider = props => {
       value={{
         todoData,
         fetchTodoData,
-        accessToken,
         toggleEditTodo,
         todoEditState,
         resetEditStatus,

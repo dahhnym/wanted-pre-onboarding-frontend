@@ -23,7 +23,7 @@ const ToDo = () => {
   }, []);
 
   useEffect(() => {
-    ctx.fetchTodoData();
+    ctx.fetchTodoData(accessToken);
   }, []);
 
   return (
