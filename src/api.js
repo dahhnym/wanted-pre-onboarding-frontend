@@ -49,7 +49,6 @@ export const getTodos = async accessToken => {
         },
       })
       .then(res => {
-        console.log(`status ${res.status} Fetch todos successfully`);
         return res.data;
       });
     return todoData;
@@ -101,7 +100,6 @@ export const updateTodo = async (id, todo, isCompleted, accessToken) => {
       },
     )
     .then(res => {
-      console.log(`status ${res.status} Todo Update success`);
       return true;
     })
     .catch(error => console.error('Fail to update', error));
@@ -114,9 +112,11 @@ export const deleteTodo = async (id, accessToken) => {
         Authorization: `Bearer ${accessToken}`,
       },
     })
-    .then(res => {
-      console.log(`status ${res.status} Delete Success`);
-      return true;
+    .then(() => {
+      return { isSuccess: true };
     })
-    .catch(error => console.error('Fail to delete', error));
+    .catch(error => {
+      console.error('Fail to delete', error);
+      return { isSuccess: false, data: error.response.data };
+    });
 };
