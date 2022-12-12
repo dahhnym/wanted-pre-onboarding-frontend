@@ -5,38 +5,83 @@ import EmailInput from './components/EmailInput';
 import FormButton from './components/FormButton';
 import PasswordInput from './components/PasswordInput';
 import './Auth.scss';
+import { useReducer } from 'react';
+
+const CHANGE_INPUT_EMAIL = 'CHANGE_INPUT_EMAIL';
+const VALIDATE_EMAIL = 'VALIDATE_EMAIL';
+const CHANGE_INPUT_PASSWORD = 'HANGE_INPUT_PASSWORD';
+const VALIDATE_PASSWORD = 'VALIDATE_PASSWORD';
+const RESET_EMAIL_STATE = 'RESET_EMAIL_STATE';
+const RESET_PASSWORD_STATE = 'RESET_EMAIL_STATE';
+
+const emailReducer = (state, action) => {
+  if (action.type === CHANGE_INPUT_EMAIL) {
+    return { val: action.val, isEmailValid: action.isEmailValid };
+  }
+  if (action.type === VALIDATE_EMAIL) {
+    const regEmail = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(state.val);
+    return { val: state.val, isEmailValid: regEmail };
+  }
+  if (action.type === RESET_EMAIL_STATE) {
+    return { val: '', isEmailValid: false };
+  }
+};
+
+const passwordReducer = (state, action) => {
+  if (action.type === CHANGE_INPUT_PASSWORD) {
+    return { val: action.val, isPasswordValid: action.isPasswordValid };
+  }
+  if (action.type === VALIDATE_PASSWORD) {
+    const regPassword = /^[\w\d]{8,}$/.test(state.val);
+    return { val: state.val, isPasswordValid: regPassword };
+  }
+  if (action.type === RESET_PASSWORD_STATE) {
+    return { val: '', isEmailValid: false };
+  }
+};
 
 const Auth = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const [isSignInClicked, setIsSignInClicked] = useState(false);
-  const [isEmailValid, setIsEmailValid] = useState(false);
-  const [isPasswordValid, setIsPasswordValid] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+
+  const [emailState, dispatchEmail] = useReducer(emailReducer, {
+    val: '',
+    isEmailValid: false,
+  });
+  const [passwordState, dispatchPassword] = useReducer(passwordReducer, {
+    val: '',
+    isPasswordValid: false,
+  });
 
   const navigate = useNavigate();
 
-  const EmailInputHandler = e => {
-    setEmail(e.target.value);
+  const emailInputHandler = e => {
+    dispatchEmail({ type: CHANGE_INPUT_EMAIL, val: e.target.value });
     setErrorMsg('');
   };
 
-  const PasswordInputHandler = e => {
-    setPassword(e.target.value);
+  const checkEmailValidHandler = () => {
+    dispatchEmail({ type: VALIDATE_EMAIL });
+  };
+
+  const passwordInputHandler = e => {
+    dispatchPassword({ type: CHANGE_INPUT_PASSWORD, val: e.target.value });
     setErrorMsg('');
+  };
+
+  const checkPasswordValidHandler = () => {
+    dispatchPassword({ type: VALIDATE_PASSWORD });
   };
 
   const onClickToSignIn = () => {
-    setEmail('');
-    setPassword('');
     setIsSignInClicked(prev => !prev);
-    setIsEmailValid(false);
-    setIsPasswordValid(false);
     setErrorMsg('');
+    dispatchEmail({ type: RESET_EMAIL_STATE });
+    dispatchPassword({ type: RESET_PASSWORD_STATE });
   };
 
   const signUpUser = async () => {
-    const response = await signUpNewUser(email, password);
+    const response = await signUpNewUser(emailState.val, passwordState.val);
     const { isSuccess, data } = response;
     if (isSuccess) {
       alert('회원가입 성공. 환영합니다!');
@@ -49,7 +94,7 @@ const Auth = () => {
   };
 
   const signInUser = async () => {
-    const response = await getUser(email, password);
+    const response = await getUser(emailState.val, passwordState.val);
     const { isSuccess, data } = response;
 
     if (isSuccess) {
@@ -71,7 +116,11 @@ const Auth = () => {
 
   const onSubmit = async e => {
     e.preventDefault();
-    if (email.trim().length === 0 || password.trim().length === 0) return;
+    if (
+      emailState.val.trim().length === 0 ||
+      passwordState.val.trim().length === 0
+    )
+      return;
     if (isSignInClicked) {
       signInUser();
     } else {
@@ -83,21 +132,21 @@ const Auth = () => {
     <div className="signin-container">
       <form className="signin-form" onSubmit={onSubmit}>
         <EmailInput
-          isEmailValid={isEmailValid}
-          setIsEmailValid={setIsEmailValid}
-          onEmailChange={EmailInputHandler}
-          emailValue={email}
+          isEmailValid={emailState.isEmailValid}
+          onEmailChange={emailInputHandler}
+          onEmailBlur={checkEmailValidHandler}
+          emailValue={emailState.val}
         />
         <PasswordInput
-          isPasswordValid={isPasswordValid}
-          setIsPasswordValid={setIsPasswordValid}
-          onPasswordChange={PasswordInputHandler}
-          passwordValue={password}
+          isPasswordValid={passwordState.isPasswordValid}
+          onPasswordChange={passwordInputHandler}
+          checkPasswordValid={checkPasswordValidHandler}
+          passwordValue={passwordState.val}
         />
         {errorMsg !== '' ? <p className="invalid">{errorMsg}</p> : null}
         <FormButton
-          isEmailValid={isEmailValid}
-          isPasswordValid={isPasswordValid}
+          isEmailValid={emailState.isEmailValid}
+          isPasswordValid={passwordState.isPasswordValid}
           onClickToSignIn={onClickToSignIn}
           isSignInClicked={isSignInClicked}
         />
