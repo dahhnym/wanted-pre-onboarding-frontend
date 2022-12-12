@@ -3,7 +3,8 @@ div,
 ul,
 button,
 h1,
-p {
+p,
+fieldset {
   box-sizing: border-box;
   margin: 0;
   padding: 0;

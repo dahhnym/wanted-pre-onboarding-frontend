@@ -40,11 +40,15 @@ const ToDo = () => {
 
   const createToDo = async e => {
     e.preventDefault();
-    setTodo('');
+    if (todo.trim().length === 0) {
+      alert('내용을 입력해주세요.');
+      return;
+    }
     const isSuccess = await postTodo(todo, accessToken);
     if (isSuccess) {
       await fetchTodoData();
     }
+    setTodo('');
   };
 
   const writeTodo = e => {
@@ -63,6 +67,11 @@ const ToDo = () => {
   };
 
   const handleUpdateTodo = async (id, todoContent, isCompletedStatus) => {
+    if (todoContent.trim().length === 0) {
+      setIsEditing(false);
+      setSelectedTodoId(0);
+      return;
+    }
     const isSuccess = await updateTodo(
       id,
       todoContent,
@@ -80,9 +89,13 @@ const ToDo = () => {
   const handleDeleteTodo = async e => {
     const selectedTodoIdNumber = Number(e.target.value);
     setSelectedTodoId(selectedTodoIdNumber);
-    const isSuccess = await deleteTodo(selectedTodoIdNumber, accessToken);
-    if (isSuccess) {
+    const response = await deleteTodo(selectedTodoIdNumber, accessToken);
+    if (response.isSuccess) {
       await fetchTodoData();
+    } else {
+      setSelectedTodoId(0);
+      alert(`에러 코드 ${response.data.statusCode}. 투두 삭제 실패`);
+      return;
     }
   };
 
@@ -102,6 +115,7 @@ const ToDo = () => {
             <legend className="todo__title">To Do List</legend>
             <input
               type="text"
+              maxLength="20"
               placeholder="To Do"
               value={todo}
               onChange={writeTodo}
@@ -110,42 +124,54 @@ const ToDo = () => {
               추가
             </button>
           </fieldset>
+          <desc className="todo__form-desc">최대 20글자</desc>
         </form>
+
         <ul className="todo__list">
           {todoData &&
             todoData.map(item => {
               return (
                 <li key={item.id} className="list-item">
-                  <input
-                    type="checkbox"
-                    id={item.id}
-                    checked={item.isCompleted}
-                    onChange={() =>
-                      handleUpdateTodo(item.id, item.todo, !item.isCompleted)
-                    }
-                    style={{ display: 'none' }}
-                  />
-                  <img
-                    src={item.isCompleted ? Checked : NotChecked}
-                    alt={item.isCompleted ? '완료' : '미완료'}
-                    style={{ width: '25px' }}
-                    onClick={() =>
-                      handleUpdateTodo(item.id, item.todo, !item.isCompleted)
-                    }
-                  />
-                  {selectedTodoId !== item.id && (
-                    <label
-                      htmlFor={item.id}
-                      className={`list-item__desc ${
-                        item.isCompleted ? 'completed' : ''
-                      }`}
-                    >
-                      {item.todo}
-                    </label>
-                  )}
+                  <div className="list-item-desc__wrapper">
+                    <input
+                      type="checkbox"
+                      id={item.id}
+                      checked={item.isCompleted}
+                      onChange={() =>
+                        handleUpdateTodo(item.id, item.todo, !item.isCompleted)
+                      }
+                      style={{ display: 'none' }}
+                    />
+                    <img
+                      src={item.isCompleted ? Checked : NotChecked}
+                      alt={item.isCompleted ? '완료' : '미완료'}
+                      style={{ width: '25px' }}
+                      onClick={() =>
+                        handleUpdateTodo(item.id, item.todo, !item.isCompleted)
+                      }
+                    />
+                    {selectedTodoId !== item.id && (
+                      <label
+                        htmlFor={item.id}
+                        className={`list-item__desc ${
+                          item.isCompleted ? 'completed' : ''
+                        }`}
+                      >
+                        {item.todo}
+                      </label>
+                    )}
+                    {isEditing && selectedTodoId === item.id && (
+                      <input
+                        type="text"
+                        value={newTodo}
+                        onChange={editTodo}
+                        className="list-item__edit-input"
+                      />
+                    )}
+                  </div>
+
                   {isEditing && selectedTodoId === item.id && (
                     <>
-                      <input type="text" value={newTodo} onChange={editTodo} />
                       <div className="button-wrapper">
                         <button
                           type="button"

@@ -29,9 +29,10 @@
 
 .todo__form {
   margin-top: 5rem;
-  margin-bottom: 2rem;
+  margin-bottom: 2.5rem;
   text-align: center;
   width: 100%;
+  position: relative;
   input {
     border: solid 1px #e1e2e3;
     width: 100%;
@@ -40,7 +41,19 @@
     border-radius: 5px;
     padding-left: 0.5rem;
     margin-right: 1rem;
+    &:focus {
+      border: solid 1px transparent;
+      outline: solid 1px #3366ff;
+    }
   }
+}
+
+.todo__form-desc {
+  position: absolute;
+  bottom: -25px;
+  right: 110px;
+  font-size: 0.9rem;
+  color: #888888;
 }
 
 .btn-submit__create-todo {
@@ -59,22 +72,30 @@
 .list-item {
   height: 2rem;
   font-size: 1rem;
-  padding-left: 2rem;
+  padding: 0 2rem;
   display: flex;
+  justify-content: space-between;
+}
+
+.list-item-desc__wrapper {
+  display: flex;
+  width: calc(100% - 60px);
 }
 
 .list-item__desc {
   font-size: 1rem;
   line-height: 2rem;
-  margin: 0 0.5rem;
+  margin-left: 0.5rem;
+  width: 100%;
 }
 
 .completed {
   text-decoration: line-through;
 }
 
-.list-item__button {
-  // border: solid 1px red;
+.list-item__edit-input {
+  margin-left: 0.2rem;
+  width: 100%;
 }
 
 .a11y-hidden {
