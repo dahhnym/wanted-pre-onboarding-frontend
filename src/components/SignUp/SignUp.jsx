@@ -1,6 +1,9 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getUser, signUpNewUser } from '../../api';
+import EmailInput from './components/EmailInput';
+import FormButton from './components/FormButton';
+import PasswordInput from './components/PasswordInput';
 import './SignUp.scss';
 
 const SignUp = () => {
@@ -13,19 +16,15 @@ const SignUp = () => {
 
   const navigate = useNavigate();
 
-  const accountExisted = '이미 계정이 있으신가요?';
-  const accountNotExisted = '계정이 없으신가요?';
-  const login = '로그인';
-  const signUp = '회원가입';
-
-  const onEmailChange = e => {
+  const EmailInputHandler = e => {
     setEmail(e.target.value);
-    if (email.trim().length === 0) {
-      setErrorMsg('');
-    }
+    setErrorMsg('');
   };
 
-  const onPasswordChange = e => setPassword(e.target.value);
+  const PasswordInputHandler = e => {
+    setPassword(e.target.value);
+    setErrorMsg('');
+  };
 
   const onClickToSignIn = () => {
     setEmail('');
@@ -33,6 +32,7 @@ const SignUp = () => {
     setIsSignInClicked(prev => !prev);
     setIsEmailValid(false);
     setIsPasswordValid(false);
+    setErrorMsg('');
   };
 
   const signUpUser = async () => {
@@ -62,6 +62,9 @@ const SignUp = () => {
       if (data.statusCode === 401) {
         setErrorMsg('입력하신 정보가 일치하지 않습니다.');
       }
+      if (data.statusCode === 404) {
+        setErrorMsg('입력하신 정보가 존재하지 않습니다.');
+      }
       return false;
     }
   };
@@ -76,65 +79,28 @@ const SignUp = () => {
     }
   };
 
-  const checkEmailValidity = () => {
-    const regEmail = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email);
-
-    if (regEmail) {
-      setIsEmailValid(true);
-    } else {
-      setIsEmailValid(false);
-    }
-  };
-
-  const checkPasswordValidity = () => {
-    const regPassword = /^[\w\d]{8,}$/.test(password);
-    if (regPassword) {
-      setIsPasswordValid(true);
-    } else {
-      setIsPasswordValid(false);
-    }
-  };
-
   return (
     <div className="signin-container">
       <form className="signin-form" onSubmit={onSubmit}>
-        <label className="form__label">이메일</label>
-        <input
-          className={`form__input ${isEmailValid ? 'passed' : ''}`}
-          type="text"
-          placeholder="이메일"
-          value={email}
-          onChange={onEmailChange}
-          onBlur={checkEmailValidity}
+        <EmailInput
+          isEmailValid={isEmailValid}
+          setIsEmailValid={setIsEmailValid}
+          onEmailChange={EmailInputHandler}
+          emailValue={email}
         />
-        <label className="form__label">비밀번호</label>
-        <input
-          className={`form__input ${isPasswordValid ? 'passed' : ''}`}
-          type="password"
-          placeholder="비밀번호"
-          value={password}
-          onChange={onPasswordChange}
-          onKeyUp={checkPasswordValidity}
+        <PasswordInput
+          isPasswordValid={isPasswordValid}
+          setIsPasswordValid={setIsPasswordValid}
+          onPasswordChange={PasswordInputHandler}
+          passwordValue={password}
         />
         {errorMsg !== '' ? <p className="invalid">{errorMsg}</p> : null}
-        <button
-          className={`btn-submit ${
-            isEmailValid && isPasswordValid && 'activate'
-          }`}
-          type="submit"
-        >
-          {isSignInClicked ? login : signUp}
-        </button>
-        <p className="desc">
-          {!isSignInClicked ? accountExisted : accountNotExisted}
-          <button
-            type="button"
-            className="btn-switch"
-            onClick={onClickToSignIn}
-          >
-            <span>{isSignInClicked ? signUp : login}</span>
-          </button>
-        </p>
+        <FormButton
+          isEmailValid={isEmailValid}
+          isPasswordValid={isPasswordValid}
+          onClickToSignIn={onClickToSignIn}
+          isSignInClicked={isSignInClicked}
+        />
       </form>
     </div>
   );
