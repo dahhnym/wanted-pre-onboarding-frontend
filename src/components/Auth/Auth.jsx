@@ -4,9 +4,9 @@ import { getUser, signUpNewUser } from '../../api';
 import EmailInput from './components/EmailInput';
 import FormButton from './components/FormButton';
 import PasswordInput from './components/PasswordInput';
-import './SignUp.scss';
+import './Auth.scss';
 
-const SignUp = () => {
+const Auth = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isSignInClicked, setIsSignInClicked] = useState(false);
@@ -106,4 +106,4 @@ const SignUp = () => {
   );
 };
 
-export default SignUp;
+export default Auth;

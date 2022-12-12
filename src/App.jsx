@@ -1,6 +1,6 @@
 import './App.css';
 import './reset.css';
-import SignUp from './components/SignUp/SignUp';
+import Auth from './components/Auth/Auth';
 import { Route, Routes, useNavigate } from 'react-router-dom';
 import ToDo from './components/ToDo/ToDo';
 import { useEffect } from 'react';
@@ -20,7 +20,7 @@ function App() {
   return (
     <div className="App">
       <Routes>
-        <Route path="/" element={<SignUp />} />
+        <Route path="/" element={<Auth />} />
         <Route path="/todo" element={<ToDo />} />
       </Routes>
     </div>
