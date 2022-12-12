@@ -32,7 +32,10 @@ export const getUser = async (email, password) => {
     })
     .catch(error => {
       console.error(error);
-      if (error.response.data.statusCode === 401) {
+      if (
+        error.response.data.statusCode === 401 ||
+        error.response.data.statusCode === 404
+      ) {
         return { isSuccess: false, data: error.response.data };
       } else {
         console.error('로그인 실패', error);
