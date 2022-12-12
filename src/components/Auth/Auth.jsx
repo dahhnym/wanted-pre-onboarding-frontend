@@ -1,55 +1,35 @@
-import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getUser, signUpNewUser } from '../../api';
 import EmailInput from './components/EmailInput';
 import FormButton from './components/FormButton';
 import PasswordInput from './components/PasswordInput';
 import './Auth.scss';
+import { useContext } from 'react';
+import AuthContext from '../../store/auth-context';
 
 const Auth = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [isSignInClicked, setIsSignInClicked] = useState(false);
-  const [isEmailValid, setIsEmailValid] = useState(false);
-  const [isPasswordValid, setIsPasswordValid] = useState(false);
-  const [errorMsg, setErrorMsg] = useState('');
+  const ctx = useContext(AuthContext);
 
   const navigate = useNavigate();
 
-  const EmailInputHandler = e => {
-    setEmail(e.target.value);
-    setErrorMsg('');
-  };
-
-  const PasswordInputHandler = e => {
-    setPassword(e.target.value);
-    setErrorMsg('');
-  };
-
-  const onClickToSignIn = () => {
-    setEmail('');
-    setPassword('');
-    setIsSignInClicked(prev => !prev);
-    setIsEmailValid(false);
-    setIsPasswordValid(false);
-    setErrorMsg('');
-  };
-
   const signUpUser = async () => {
-    const response = await signUpNewUser(email, password);
+    const response = await signUpNewUser(
+      ctx.emailState.val,
+      ctx.passwordState.val,
+    );
     const { isSuccess, data } = response;
     if (isSuccess) {
       alert('회원가입 성공. 환영합니다!');
       localStorage.setItem('access_token', data['access_token']);
       navigate('/todo');
     } else {
-      setErrorMsg(data.message);
+      ctx.setErrorMsg(data.message);
       return;
     }
   };
 
   const signInUser = async () => {
-    const response = await getUser(email, password);
+    const response = await getUser(ctx.emailState.val, ctx.passwordState.val);
     const { isSuccess, data } = response;
 
     if (isSuccess) {
@@ -60,10 +40,10 @@ const Auth = () => {
     } else {
       // status code 401 : Unauthorized
       if (data.statusCode === 401) {
-        setErrorMsg('입력하신 정보가 일치하지 않습니다.');
+        ctx.setErrorMsg('입력하신 정보가 일치하지 않습니다.');
       }
       if (data.statusCode === 404) {
-        setErrorMsg('입력하신 정보가 존재하지 않습니다.');
+        ctx.setErrorMsg('입력하신 정보가 존재하지 않습니다.');
       }
       return false;
     }
@@ -71,36 +51,27 @@ const Auth = () => {
 
   const onSubmit = async e => {
     e.preventDefault();
-    if (email.trim().length === 0 || password.trim().length === 0) return;
-    if (isSignInClicked) {
-      signInUser();
+    if (
+      ctx.emailState.val.trim().length === 0 ||
+      ctx.passwordState.val.trim().length === 0
+    )
+      return;
+    if (ctx.isSignInClicked) {
+      await signInUser();
+      ctx.resetInput();
     } else {
-      signUpUser();
+      await signUpUser();
+      ctx.resetInput();
     }
   };
 
   return (
     <div className="signin-container">
       <form className="signin-form" onSubmit={onSubmit}>
-        <EmailInput
-          isEmailValid={isEmailValid}
-          setIsEmailValid={setIsEmailValid}
-          onEmailChange={EmailInputHandler}
-          emailValue={email}
-        />
-        <PasswordInput
-          isPasswordValid={isPasswordValid}
-          setIsPasswordValid={setIsPasswordValid}
-          onPasswordChange={PasswordInputHandler}
-          passwordValue={password}
-        />
-        {errorMsg !== '' ? <p className="invalid">{errorMsg}</p> : null}
-        <FormButton
-          isEmailValid={isEmailValid}
-          isPasswordValid={isPasswordValid}
-          onClickToSignIn={onClickToSignIn}
-          isSignInClicked={isSignInClicked}
-        />
+        <EmailInput />
+        <PasswordInput />
+        {ctx.errorMsg !== '' ? <p className="invalid">{ctx.errorMsg}</p> : null}
+        <FormButton />
       </form>
     </div>
   );
