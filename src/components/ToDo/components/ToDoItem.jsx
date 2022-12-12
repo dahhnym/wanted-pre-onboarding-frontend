@@ -46,7 +46,7 @@ const ToDoItem = ({ todoSingleData }) => {
       accessToken,
     );
     if (isSuccess) {
-      ctx.fetchTodoData();
+      ctx.fetchTodoData(accessToken);
     }
     ctx.resetEditStatus();
   };

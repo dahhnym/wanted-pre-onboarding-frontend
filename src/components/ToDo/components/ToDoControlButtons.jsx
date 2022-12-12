@@ -7,14 +7,15 @@ import TodoContext from '../../../store/todo-context';
 const ToDoControlButtons = ({ todoData }) => {
   const ctx = useContext(TodoContext);
 
+  const accessToken = localStorage.getItem('access_token');
   const { id } = todoData;
 
   const handleDeleteTodo = async e => {
     const selectedTodoIdNumber = Number(e.target.value);
     ctx.setSelectedTodoId(selectedTodoIdNumber);
-    const response = await deleteTodo(selectedTodoIdNumber, ctx.accessToken);
+    const response = await deleteTodo(selectedTodoIdNumber, accessToken);
     if (response.isSuccess) {
-      ctx.fetchTodoData();
+      ctx.fetchTodoData(accessToken);
     } else {
       ctx.resetEditStatus();
       alert(`에러 코드 ${response.data.statusCode}. 투두 삭제 실패`);

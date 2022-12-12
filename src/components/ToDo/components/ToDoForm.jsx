@@ -17,7 +17,7 @@ const ToDoForm = () => {
     }
     const isSuccess = await postTodo(todo, accessToken);
     if (isSuccess) {
-      ctx.fetchTodoData();
+      ctx.fetchTodoData(accessToken);
     }
     setTodo('');
   };
