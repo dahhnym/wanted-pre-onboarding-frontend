@@ -6,14 +6,20 @@ axios.defaults.baseURL = 'https://pre-onboarding-selection-task.shop/';
 axios.defaults.headers.post['Content-Type'] = 'application/json';
 
 export const signUpNewUser = async (email, password) => {
-  const accessToken = await axios
+  return await axios
     .post('/auth/signup', { email: email, password: password })
     .then(res => {
-      alert('Sign up success!');
-      return res.data['access_token'];
+      if (res.status === 201) {
+        return { isSuccess: true, data: res.data };
+      }
     })
-    .catch(error => console.error(error));
-  return accessToken;
+    .catch(error => {
+      if (error.response.data.statusCode === 400) {
+        return { isSuccess: false, data: error.response.data };
+      } else {
+        console.error('회원가입 실패', error);
+      }
+    });
 };
 
 export const getUser = async (email, password) => {
@@ -21,11 +27,17 @@ export const getUser = async (email, password) => {
     .post('/auth/signin', { email: email, password: password })
     .then(res => {
       if (res.status === 200) {
-        alert('You are signed in!');
-        return res.data['access_token'];
+        return { isSuccess: true, data: res.data };
       }
     })
-    .catch(error => console.error(error));
+    .catch(error => {
+      console.error(error);
+      if (error.response.data.statusCode === 401) {
+        return { isSuccess: false, data: error.response.data };
+      } else {
+        console.error('로그인 실패', error);
+      }
+    });
 };
 
 export const getTodos = async accessToken => {

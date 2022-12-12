@@ -6,10 +6,10 @@ import './SignUp.scss';
 const SignUp = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [isPassed, setIsPassed] = useState(false);
   const [isSignInClicked, setIsSignInClicked] = useState(false);
   const [isEmailValid, setIsEmailValid] = useState(false);
   const [isPasswordValid, setIsPasswordValid] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
 
   const navigate = useNavigate();
 
@@ -18,7 +18,12 @@ const SignUp = () => {
   const login = '로그인';
   const signUp = '회원가입';
 
-  const onEmailChange = e => setEmail(e.target.value);
+  const onEmailChange = e => {
+    setEmail(e.target.value);
+    if (email.trim().length === 0) {
+      setErrorMsg('');
+    }
+  };
 
   const onPasswordChange = e => setPassword(e.target.value);
 
@@ -26,25 +31,37 @@ const SignUp = () => {
     setEmail('');
     setPassword('');
     setIsSignInClicked(prev => !prev);
-    setIsPassed(false);
+    setIsEmailValid(false);
+    setIsPasswordValid(false);
   };
 
   const signUpUser = async () => {
-    const accessToken = await signUpNewUser(email, password);
-    if (accessToken) {
-      localStorage.setItem('access_token', accessToken);
-      return true;
+    const response = await signUpNewUser(email, password);
+    const { isSuccess, data } = response;
+    if (isSuccess) {
+      alert('회원가입 성공. 환영합니다!');
+      localStorage.setItem('access_token', data['access_token']);
+      navigate('/todo');
     } else {
-      return false;
+      setErrorMsg(data.message);
+      return;
     }
   };
 
   const signInUser = async () => {
-    const accessToken = await getUser(email, password);
-    if (accessToken) {
-      localStorage.setItem('access_token', accessToken);
+    const response = await getUser(email, password);
+    const { isSuccess, data } = response;
+
+    if (isSuccess) {
+      alert('로그인 성공. 환영합니다!');
+      localStorage.setItem('access_token', data['access_token']);
+      navigate('/todo');
       return true;
     } else {
+      // status code 401 : Unauthorized
+      if (data.statusCode === 401) {
+        setErrorMsg('입력하신 정보가 일치하지 않습니다.');
+      }
       return false;
     }
   };
@@ -52,36 +69,12 @@ const SignUp = () => {
   const onSubmit = async e => {
     e.preventDefault();
     if (email.trim().length === 0 || password.trim().length === 0) return;
-    // checkValidation();
     if (isSignInClicked) {
-      const isSuccess = await signInUser();
-      if (isSuccess) {
-        navigate('/todo');
-      } else {
-        alert('Login Fail');
-        return;
-      }
+      signInUser();
     } else {
-      const isSuccess = await signUpUser();
-      if (isSuccess) {
-        navigate('/todo');
-      } else {
-        alert('Signup Fail');
-        return;
-      }
+      signUpUser();
     }
   };
-
-  // const checkValidation = () => {
-  //   const regEmail = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email);
-  //   const regPassword = /^[\w\d]{8,}$/.test(password);
-
-  //   if (regEmail && regPassword) {
-  //     setIsPassed(true);
-  //   } else {
-  //     setIsPassed(false);
-  //   }
-  // };
 
   const checkEmailValidity = () => {
     const regEmail = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email);
@@ -94,7 +87,6 @@ const SignUp = () => {
   };
 
   const checkPasswordValidity = () => {
-    console.log('checking pw');
     const regPassword = /^[\w\d]{8,}$/.test(password);
     if (regPassword) {
       setIsPasswordValid(true);
@@ -124,6 +116,7 @@ const SignUp = () => {
           onChange={onPasswordChange}
           onKeyUp={checkPasswordValidity}
         />
+        {errorMsg !== '' ? <p className="invalid">{errorMsg}</p> : null}
         <button
           className={`btn-submit ${
             isEmailValid && isPasswordValid && 'activate'

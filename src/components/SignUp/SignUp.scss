@@ -68,10 +68,17 @@
 }
 
 .desc {
+  margin-top: 0.5rem;
   font-size: 0.9rem;
   color: #888888;
   font-weight: bold;
   button {
     margin-left: 0.3rem;
   }
+}
+
+.invalid {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  color: #d82418;
 }
