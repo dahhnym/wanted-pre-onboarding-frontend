@@ -82,15 +82,25 @@ export const AuthContextProvider = props => {
     setIsSignInClicked(prev => !prev);
   };
 
-  const [emailState, dispatchEmail] = useReducer(emailReducer, {
+  const initiaEmaillState = {
     val: '',
     isEmailValid: false,
-  });
+  };
 
-  const [passwordState, dispatchPassword] = useReducer(passwordReducer, {
+  const initialPasswordState = {
     val: '',
     isPasswordValid: false,
-  });
+  };
+
+  const [emailState, dispatchEmail] = useReducer(
+    emailReducer,
+    initiaEmaillState,
+  );
+
+  const [passwordState, dispatchPassword] = useReducer(
+    passwordReducer,
+    initialPasswordState,
+  );
 
   return (
     <AuthContext.Provider

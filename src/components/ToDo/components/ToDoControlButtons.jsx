@@ -1,23 +1,22 @@
 import Edit from './../../../assets/edit.svg';
 import Delete from './../../../assets/delete.svg';
 import { deleteTodo } from '../../../api';
+import { useContext } from 'react';
+import TodoContext from '../../../store/todo-context';
 
-const ToDoControlButtons = ({
-  fetchTodoData,
-  setSelectedTodoId,
-  handleEditTodo,
-  isEditing,
-  id,
-  accessToken,
-}) => {
+const ToDoControlButtons = ({ todoData }) => {
+  const ctx = useContext(TodoContext);
+
+  const { id } = todoData;
+
   const handleDeleteTodo = async e => {
     const selectedTodoIdNumber = Number(e.target.value);
-    setSelectedTodoId(selectedTodoIdNumber);
-    const response = await deleteTodo(selectedTodoIdNumber, accessToken);
+    ctx.setSelectedTodoId(selectedTodoIdNumber);
+    const response = await deleteTodo(selectedTodoIdNumber, ctx.accessToken);
     if (response.isSuccess) {
-      await fetchTodoData();
+      ctx.fetchTodoData();
     } else {
-      setSelectedTodoId(0);
+      ctx.resetEditStatus();
       alert(`에러 코드 ${response.data.statusCode}. 투두 삭제 실패`);
       return;
     }
@@ -29,9 +28,9 @@ const ToDoControlButtons = ({
         <button
           type="button"
           className="list-item__button"
-          onClick={handleEditTodo}
+          onClick={e => ctx.toggleEditTodo(e.target.value)}
           value={id}
-          disabled={isEditing}
+          disabled={ctx.todoEditState.isEditing}
           style={{
             background: `center / cover no-repeat url(${Edit})`,
             width: '20px',
@@ -45,7 +44,7 @@ const ToDoControlButtons = ({
           className="list-item__button"
           onClick={handleDeleteTodo}
           value={id}
-          disabled={isEditing}
+          disabled={ctx.todoEditState.isEditing}
           style={{
             background: `center / cover no-repeat url(${Delete})`,
             width: '20px',

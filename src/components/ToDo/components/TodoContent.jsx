@@ -1,15 +1,14 @@
-const ToDoContent = ({
-  selectedTodoId,
-  id,
-  isCompleted,
-  todo,
-  isEditing,
-  newTodo,
-  editTodo,
-}) => {
+import { useContext } from 'react';
+import TodoContext from '../../../store/todo-context';
+
+const ToDoContent = ({ todoData, newTodo, onEditTodo }) => {
+  const ctx = useContext(TodoContext);
+
+  const { id, isCompleted, todo } = todoData;
+
   return (
     <>
-      {selectedTodoId !== id && (
+      {ctx.todoEditState.selectedTodoId !== id && (
         <label
           htmlFor={id}
           className={`list-item__desc ${isCompleted ? 'completed' : ''}`}
@@ -17,16 +16,19 @@ const ToDoContent = ({
           {todo}
         </label>
       )}
-      {isEditing && selectedTodoId === id && (
-        <input
-          type="text"
-          value={newTodo}
-          onChange={editTodo}
-          className="list-item__edit-input"
-        />
-      )}
+      {ctx.todoEditState.isEditing &&
+        ctx.todoEditState.selectedTodoId === id && (
+          <input
+            type="text"
+            maxLength={20}
+            value={newTodo}
+            onChange={onEditTodo}
+            className="list-item__edit-input"
+          />
+        )}
     </>
   );
+  //
 };
 
 export default ToDoContent;

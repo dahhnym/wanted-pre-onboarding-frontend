@@ -1,87 +1,81 @@
 import ToDoControlButtons from './ToDoControlButtons';
-import { useState } from 'react';
 import { updateTodo } from '../../../api';
 import ToDoEditButtons from './ToDoEditButtons';
 import Checkbox from './Checkbox';
 import ToDoContent from './TodoContent';
+import { useContext } from 'react';
+import TodoContext from '../../../store/todo-context';
+import { useReducer } from 'react';
 
-const ToDoItem = ({ todoData, fetchTodoData }) => {
-  const { id, isCompleted, todo } = todoData;
+const EDITING_TODO = 'EDITING_TODO';
+
+const todoReducer = (state, action) => {
+  if (action.type === EDITING_TODO) {
+    return {
+      ...state,
+      val: action.val,
+    };
+  }
+};
+
+const ToDoItem = ({ todoSingleData }) => {
+  const { id } = todoSingleData;
   const accessToken = localStorage.getItem('access_token');
 
-  const [selectedTodoId, setSelectedTodoId] = useState();
-  const [isEditing, setIsEditing] = useState(false);
-  const [newTodo, setNewTodo] = useState('');
+  const ctx = useContext(TodoContext);
 
-  const handleEditTodo = e => {
-    const selectedTodoIdNumber = Number(e.target.value);
-    setSelectedTodoId(selectedTodoIdNumber);
-    setIsEditing(prev => !prev);
-    setNewTodo('');
+  const initialState = {
+    val: todoSingleData.todo,
   };
+
+  const [todoState, dispatchTodo] = useReducer(todoReducer, initialState);
 
   const editTodo = e => {
-    setNewTodo(e.target.value);
+    dispatchTodo({ type: 'EDITING_TODO', val: e.target.value });
   };
 
-  const handleUpdateTodo = async (id, todoContent, isCompletedStatus) => {
-    if (todoContent.trim().length === 0) {
-      setIsEditing(false);
-      setSelectedTodoId(0);
+  const handleUpdateTodo = async (id, newTodo, isCompletedStatus) => {
+    if (newTodo.trim().length === 0) {
+      ctx.resetEditStatus();
       return;
     }
     const isSuccess = await updateTodo(
       id,
-      todoContent,
+      newTodo,
       isCompletedStatus,
       accessToken,
     );
     if (isSuccess) {
-      await fetchTodoData();
+      ctx.fetchTodoData();
     }
-    await setIsEditing(false);
-    await setSelectedTodoId(0);
-    await setNewTodo('');
+    ctx.resetEditStatus();
   };
 
   return (
     <li key={id} className="list-item">
       <div className="list-item-desc__wrapper">
         <Checkbox
-          id={id}
-          isCompleted={isCompleted}
-          todo={todo}
+          todoData={todoSingleData}
           handleUpdateTodo={handleUpdateTodo}
         />
         <ToDoContent
-          selectedTodoId={selectedTodoId}
-          id={id}
-          isCompleted={isCompleted}
-          todo={todo}
-          isEditing={isEditing}
-          newTodo={newTodo}
-          editTodo={editTodo}
+          newTodo={todoState.val}
+          onEditTodo={editTodo}
+          todoData={todoSingleData}
         />
       </div>
-      {isEditing && selectedTodoId === id && (
-        <ToDoEditButtons
-          handleUpdateTodo={handleUpdateTodo}
-          selectedTodoId={selectedTodoId}
-          newTodo={newTodo}
-          isCompleted={isCompleted}
-          handleEditTodo={handleEditTodo}
-        />
-      )}
-      {selectedTodoId !== id && !isEditing && (
-        <ToDoControlButtons
-          fetchTodoData={fetchTodoData}
-          setSelectedTodoId={setSelectedTodoId}
-          handleEditTodo={handleEditTodo}
-          isEditing={isEditing}
-          id={id}
-          accessToken={accessToken}
-        />
-      )}
+      {ctx.todoEditState.isEditing &&
+        ctx.todoEditState.selectedTodoId === id && (
+          <ToDoEditButtons
+            handleUpdateTodo={handleUpdateTodo}
+            newTodo={todoState.val}
+            todoData={todoSingleData}
+          />
+        )}
+      {ctx.todoEditState.selectedTodoId !== id &&
+        !ctx.todoEditState.isEditing && (
+          <ToDoControlButtons todoData={todoSingleData} />
+        )}
     </li>
   );
 };

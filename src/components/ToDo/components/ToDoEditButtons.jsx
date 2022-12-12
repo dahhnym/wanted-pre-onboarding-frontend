@@ -1,18 +1,24 @@
 import Confirm from './../../../assets/confirm.svg';
 import Cancel from './../../../assets/cancel.svg';
+import { useContext } from 'react';
+import TodoContext from '../../../store/todo-context';
 
-const ToDoEditButtons = ({
-  handleEditTodo,
-  handleUpdateTodo,
-  selectedTodoId,
-  newTodo,
-  isCompleted,
-}) => {
+const ToDoEditButtons = ({ handleUpdateTodo, newTodo, todoData }) => {
+  const ctx = useContext(TodoContext);
+
+  const { isCompleted } = todoData;
+
   return (
     <div className="button-wrapper">
       <button
         type="button"
-        onClick={() => handleUpdateTodo(selectedTodoId, newTodo, isCompleted)}
+        onClick={() =>
+          handleUpdateTodo(
+            ctx.todoEditState.selectedTodoId,
+            newTodo,
+            isCompleted,
+          )
+        }
         className="list-item__button"
         style={{
           background: `center / contain no-repeat url(${Confirm})`,
@@ -24,7 +30,7 @@ const ToDoEditButtons = ({
       </button>
       <button
         type="button"
-        onClick={handleEditTodo}
+        onClick={e => ctx.toggleEditTodo(e.target.value)}
         className="list-item__button"
         style={{
           background: `center / contain no-repeat url(${Cancel})`,

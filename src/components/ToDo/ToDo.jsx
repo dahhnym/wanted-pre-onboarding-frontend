@@ -1,12 +1,15 @@
 import './Todo.scss';
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getTodos } from '../../api';
 import ToDoForm from './components/ToDoForm';
 import ToDoItem from './components/ToDoItem';
 import Signout from '../Auth/components/Signout';
+import { useContext } from 'react';
+import TodoContext from '../../store/todo-context';
 
 const ToDo = () => {
+  const ctx = useContext(TodoContext);
+
   const navigate = useNavigate();
   const accessToken = localStorage.getItem('access_token');
 
@@ -19,32 +22,19 @@ const ToDo = () => {
     checkAccessToken();
   }, []);
 
-  const [todoData, setTodoData] = useState([]);
-
-  const fetchTodoData = async () => {
-    const todos = await getTodos(accessToken);
-    return setTodoData(todos);
-  };
-
   useEffect(() => {
-    fetchTodoData();
+    ctx.fetchTodoData();
   }, []);
 
   return (
     <>
       <Signout />
       <div className="todo__container">
-        <ToDoForm fetchTodoData={fetchTodoData} />
+        <ToDoForm />
         <ul className="todo__list">
-          {todoData &&
-            todoData.map(item => {
-              return (
-                <ToDoItem
-                  key={item.id}
-                  todoData={item}
-                  fetchTodoData={fetchTodoData}
-                />
-              );
+          {ctx.todoData &&
+            ctx.todoData.map(item => {
+              return <ToDoItem key={item.id} todoSingleData={item} />;
             })}
         </ul>
       </div>

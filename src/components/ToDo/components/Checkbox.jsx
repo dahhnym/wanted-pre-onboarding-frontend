@@ -1,7 +1,8 @@
 import Checked from './../../../assets/checked.svg';
 import NotChecked from './../../../assets/not-checked.svg';
 
-const Checkbox = ({ id, isCompleted, todo, handleUpdateTodo }) => {
+const Checkbox = ({ todoData, handleUpdateTodo }) => {
+  const { id, isCompleted, todo } = todoData;
   return (
     <>
       <input

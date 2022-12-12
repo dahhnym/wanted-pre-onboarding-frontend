@@ -1,7 +1,11 @@
+import { useContext } from 'react';
 import { useState } from 'react';
 import { postTodo } from '../../../api';
+import TodoContext from '../../../store/todo-context';
 
-const ToDoForm = ({ fetchTodoData }) => {
+const ToDoForm = () => {
+  const ctx = useContext(TodoContext);
+
   const accessToken = localStorage.getItem('access_token');
   const [todo, setTodo] = useState('');
 
@@ -13,7 +17,7 @@ const ToDoForm = ({ fetchTodoData }) => {
     }
     const isSuccess = await postTodo(todo, accessToken);
     if (isSuccess) {
-      await fetchTodoData();
+      ctx.fetchTodoData();
     }
     setTodo('');
   };
