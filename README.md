@@ -1,3 +1,5 @@
+<a href="https://hits.seeyoufarm.com"><img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2Fdahhnym%2Fwanted-pre-onboarding-frontend&count_bg=%2379C83D&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=hits&edge_flat=true" align="right"/></a><br>
+
 # 원티드 프리온보딩 프론트엔드 인턴십 선발과제
 
 ## Dependency
