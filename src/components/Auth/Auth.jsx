@@ -58,8 +58,9 @@ const Auth = () => {
     if (
       ctx.emailState.val.trim().length === 0 ||
       ctx.passwordState.val.trim().length === 0
-    )
+    ) {
       return;
+    }
     if (ctx.isSignInClicked) {
       await signInUser();
     } else {
